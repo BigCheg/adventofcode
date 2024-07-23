@@ -1,0 +1,130 @@
+with open("C:\\...\\puzzle_input_3.txt", "r") as file:
+    puzzle_input = file.readlines()
+
+grid = [list(line.strip()) for line in puzzle_input]
+
+numbers_and_dot = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."]
+
+parts_sum = 0
+part_list = []
+
+def find_number(line, index):
+    digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+    result = None
+    
+    # Check if index-1 and index-2 are numbers
+    if index > 1 and grid[line][index -1].isdigit() and grid[line][index-2].isdigit() and grid[line][index].isdigit():
+        #print(grid[line][index-2] + grid[line][index-1] + grid[line][index])
+        result = grid[line][index-2] + grid[line][index-1] + grid[line][index]
+
+    # Check if index+1 and index+2 are numbers
+    elif index < len(grid[line]) - 2 and grid[line][index+1].isdigit() and grid[line][index+2].isdigit() and grid[line][index].isdigit():
+        #print(grid[line][index] + grid[line][index+1] + grid[line][index+2])
+        result = grid[line][index] + grid[line][index+1] + grid[line][index+2]
+
+    # Check if index-1 is a number and index+1 is not a number
+    elif 0 < index < len(grid[line]) - 1 and grid[line][index-1].isdigit() and grid[line][index+1] not in digits and grid[line][index].isdigit():
+        #print(grid[line][index-1] + grid[line][index])
+        result = grid[line][index-1] + grid[line][index]
+
+    # Check if index+1 is a number and index-1 is not a number
+    elif index < len(grid[line]) - 1 and grid[line][index+1].isdigit() and grid[line][index-1] not in digits and grid[line][index].isdigit():
+        #print(grid[line][index] + grid[line][index+1])
+        result = grid[line][index] + grid[line][index+1]
+
+    # Handle single-digit numbers
+    elif grid[line][index].isdigit():
+        # Check if it's not part of a larger number
+        if (index == 0 or not grid[line][index-1].isdigit()) and (index == len(grid[line]) - 1 or not grid[line][index+1].isdigit()):
+            #print(grid[line][index])
+            result = grid[line][index]
+
+
+    return result
+
+
+for lines in range(len(grid)):
+    for index in range(len(grid[lines])):
+        if grid[lines][index].isdigit():
+            #print("the line (on the notepad doc) is: " + str(lines + 1) + " " + " the index is: " + str(index) + " and the number is: " + str(grid[lines][index]))
+            
+            # is the index-1 a number
+            if index > 0 and grid[lines][index-1] not in numbers_and_dot:
+                result = find_number(lines, index)
+                part_list.append(result)
+                if result is not None:
+                    index += len(result)
+                continue
+
+            # is the index+1 a number
+            elif index > 0 and index < len(grid[lines]) - 1 and grid[lines][index+1] not in numbers_and_dot:
+                result = find_number(lines, index)
+                part_list.append(result)
+                if result is not None:
+                    index += len(result)
+                continue
+
+            # is the line "above" and index-1 a number
+            elif index > 0 and lines > 0 and grid[lines-1][index-1] not in numbers_and_dot:
+                result = find_number(lines, index)
+                part_list.append(result)
+                if result is not None:
+                    index += len(result)
+                continue
+
+            # is the line "above" and index a number
+            elif index > 0 and lines > 0 and grid[lines-1][index] not in numbers_and_dot:
+                result = find_number(lines, index)
+                part_list.append(result)
+                if result is not None:
+                    index += len(result)
+                continue
+
+            # is the line "above" and index+1 a number
+            elif index > 0 and lines > 0 and index < len(grid[lines]) - 1 and grid[lines-1][index+1] not in numbers_and_dot:
+                result = find_number(lines, index)
+                part_list.append(result)
+                if result is not None:
+                    index += len(result)
+                continue  
+
+            # is the line "below" and index-1 a number
+            elif index > 0 and lines < len(grid) -1 and grid[lines+1][index-1] not in numbers_and_dot:
+                result = find_number(lines, index)
+                part_list.append(result)
+                if result is not None:
+                    index += len(result)
+                continue
+
+            # is the line "below" and index a number
+            elif index > 0 and lines < len(grid) -1 and grid[lines+1][index] not in numbers_and_dot:
+                result = find_number(lines, index)
+                part_list.append(result)
+                if result is not None:
+                    index += len(result)
+                continue
+
+            # is the line "below" and index+1 a number
+            elif index > 0 and lines < len(grid) -1  and index < len(grid[lines]) - 1 and grid[lines+1][index+1] not in numbers_and_dot:
+                result = find_number(lines, index)
+                part_list.append(result)
+                if result is not None:
+                    index += len(result)
+                continue    
+
+            else: 
+                continue
+
+
+
+part_list = dict.fromkeys(part_list)
+part_list = list(part_list)
+part_list = [item for item in part_list if item is not None]
+
+
+for dig in part_list:
+    eng_num = int(dig)
+    parts_sum += eng_num
+
+print(f"{parts_sum = }")
